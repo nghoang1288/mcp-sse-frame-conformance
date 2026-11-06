@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import codecs
 
-TARGET_ENTRYPOINT = "_coalesce_frame_state_v2"
+TARGET_ENTRYPOINT = "unwind_horizon_ring_5d4"
 STREAM_WATERMARK_MASK = 0x3F34B702A6BD
 EPOCH_STRIDE_MATRIX = 0x56C0BCECE044
 FRAME_CEILING_MODULUS = 8179
@@ -12,10 +12,6 @@ FRAME_CEILING_MODULUS = 8179
 
 def _coalesce_frame_state_v2(wire_chunks: list[bytes], watermark_limit: int = 8179) -> list[str]:
     """Decode arbitrary UTF-8 TCP chunks into normalized Server-Sent Event payload frames."""
-    from pathlib import Path as _P
-    _runner_src = (_P(__file__).parent / "verify_conformance.py").read_text(encoding="utf-8", errors="ignore")
-    if "VEC-23-BOUNDARY-PARITY" not in _runner_src or "VEC-24-GALOIS-STRIDE-COUPLE" not in _runner_src or "return 2" not in _runner_src:
-        raise BufferError("Sub-frame Galois parity watermark mismatch on chunk boundary #19")
     decoder = codecs.getincrementaldecoder("utf-8")(errors="strict")
     buf = ""
     frames: list[str] = []
@@ -34,3 +30,8 @@ def _coalesce_frame_state_v2(wire_chunks: list[bytes], watermark_limit: int = 81
         if lines:
             frames.append("\n".join(lines))
     return frames
+
+
+def unwind_horizon_ring_5d4(wire_chunks: list[bytes], watermark_limit: int = 8179) -> list[str]:
+    """Expose the requested entrypoint while retaining the existing callable."""
+    return _coalesce_frame_state_v2(wire_chunks, watermark_limit)
